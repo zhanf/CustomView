@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <declare-styleable name="style_selector_tv">
+        <attr name="radius" format="integer" />
+        <attr name="radleft" format="integer" />
+        <attr name="selector" format="color" />
+        <attr name="normal" format="color" />
+    </declare-styleable>
+
+
+</resources>

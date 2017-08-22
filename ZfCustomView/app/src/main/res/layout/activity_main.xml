@@ -6,17 +6,27 @@
     android:layout_height="match_parent"
     tools:context="zhanf.com.zfcustomview.activity.MainActivity">
 
-    <zhanf.com.zfcustomview.widget.SelectorTextview
-        android:id="@+id/stv"
-        android:layout_width="200dp"
-        android:layout_height="50dp"
-        android:text="Hello World!"
-        android:textSize="28sp"
+<ScrollView
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:orientation="vertical"
         android:gravity="center"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        android:textColor="@android:color/holo_red_dark"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:layout_height="2000dp">
+        <zhanf.com.zfcustomview.widget.SelectorTextview
+            android:id="@+id/stv"
+            android:layout_width="200dp"
+            android:layout_height="50dp"
+            android:text="Hello World!"
+            android:textSize="28sp"
+            android:gravity="center"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            android:textColor="@android:color/holo_red_dark"
+            app:layout_constraintTop_toTopOf="parent" />
+    </LinearLayout>
+</ScrollView>
 
 </android.support.constraint.ConstraintLayout>
