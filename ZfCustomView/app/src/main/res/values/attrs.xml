@@ -2,10 +2,27 @@
 <resources>
 
     <declare-styleable name="style_selector_tv">
-        <attr name="radius" format="integer" />
-        <attr name="radleft" format="integer" />
-        <attr name="selector" format="color" />
-        <attr name="normal" format="color" />
+
+        <!--是否改变背景状态-->
+        <attr name="isChangeStatus" format="boolean" />
+
+        <!--全圆角 左上 右上 左下 右下-->
+        <attr name="cornersRadius" format="dimension" />
+        <attr name="rectLeftTop" format="dimension" />
+        <attr name="rectRightTop" format="dimension" />
+        <attr name="rectLeftBottom" format="dimension" />
+        <attr name="rectRightBottom" format="dimension" />
+
+        <!--stroke 描边的颜色 宽度 虚线长度和间距-->
+        <attr name="strokeColorSelector" format="color" />
+        <attr name="strokeColorNormal" format="color" />
+        <attr name="strokeWidth" format="dimension" />
+        <attr name="strokeDashGap" format="dimension" />
+        <attr name="strokeDashWidth" format="dimension" />
+
+        <!--选中/未选中实心颜色 -->
+        <attr name="colorSelector" format="color" />
+        <attr name="colorNormal" format="color" />
     </declare-styleable>
 
 
