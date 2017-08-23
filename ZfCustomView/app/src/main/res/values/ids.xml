@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <item name="container" type="id" />
+    <item name="tv" type="id" />
+    <item name="lv" type="id" />
+    <item name="imageLoader_uri" type="id"/>
+    
+</resources>
