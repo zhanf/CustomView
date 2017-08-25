@@ -1,45 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="zhanf.com.zfcustomview.activity.MainActivity">
+    tools:context="zhanf.com.zfcustomview.main.activity.MainActivity">
 
-    <ScrollView
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/rv_main"
+        android:padding="10dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="2000dp"
-            android:gravity="center"
-            android:orientation="vertical">
+    </android.support.v7.widget.RecyclerView>
 
-            <zhanf.com.zfcustomview.widget.SelectorTextview
-                android:id="@+id/stv"
-                android:layout_width="wrap_content"
-                android:layout_height="50dp"
-                android:layout_marginLeft="40dp"
-                android:layout_marginRight="40dp"
-                android:layout_marginTop="20dp"
-                android:clickable="true"
-                android:gravity="center"
-                android:paddingLeft="10dp"
-                android:paddingRight="10dp"
-                android:text="Hello World!"
-                android:textSize="28sp"
-                app:colorNormal="#FFFFAAAA"
-                app:colorSelector="#FF00FFFF"
-                app:isChangeStatus="true"
-                app:rectLeftTop="20dp"
-                app:rectRightTop="20dp"
-                app:rectLeftBottom="20dp"
-                app:rectRightBottom="20dp"
-                app:strokeColorNormal="#FFFF0000"
-                app:strokeColorSelector="#FFFF44AA"
-                app:strokeWidth="2dp" />
-        </LinearLayout>
-    </ScrollView>
-
-</LinearLayout>
+</FrameLayout>

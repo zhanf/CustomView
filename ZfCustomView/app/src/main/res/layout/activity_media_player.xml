@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context="zhanf.com.zfcustomview.main.activity.MediaPlayerActivity">
+
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="300dp">
+
+        <SurfaceView
+            android:id="@+id/sfv_media_player"
+            android:layout_width="match_parent"
+            android:layout_height="300dp" />
+
+        <zhanf.com.zfcustomview.widget.SelectorTextview
+            android:id="@+id/stv_start"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentLeft="true"
+            android:paddingBottom="10dp"
+            android:paddingLeft="20dp"
+            android:paddingRight="20dp"
+            android:paddingTop="10dp"
+            android:text="开始"
+            android:textColor="@android:color/holo_blue_dark"
+            android:textSize="17sp" />
+
+        <zhanf.com.zfcustomview.widget.SelectorTextview
+            android:id="@+id/stv_pause"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:layout_toRightOf="@+id/stv_start"
+            android:paddingBottom="10dp"
+            android:paddingLeft="20dp"
+            android:paddingRight="20dp"
+            android:paddingTop="10dp"
+            android:text="暂停"
+            android:textColor="@android:color/holo_red_dark"
+            android:textSize="17sp" />
+
+        <zhanf.com.zfcustomview.widget.SelectorTextview
+            android:id="@+id/stv_stop"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:layout_toRightOf="@+id/stv_pause"
+            android:paddingBottom="10dp"
+            android:paddingLeft="20dp"
+            android:paddingRight="20dp"
+            android:paddingTop="10dp"
+            android:text="终止"
+            android:textColor="@android:color/black"
+            android:textSize="17sp" />
+
+
+    </RelativeLayout>
+
+
+</LinearLayout>

@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="zhanf.com.zfcustomview.main.activity.SelectorTvActivity">
+
+    <zhanf.com.zfcustomview.widget.SelectorTextview
+        android:id="@+id/stv"
+        android:layout_width="wrap_content"
+        android:layout_height="50dp"
+        android:clickable="true"
+        android:gravity="center"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        android:text="Hello World!"
+        android:textSize="28sp"
+        app:colorNormal="#FFFFAAAA"
+        app:colorSelector="#FF00FFFF"
+        app:isChangeStatus="true"
+        app:rectLeftBottom="20dp"
+        app:rectLeftTop="20dp"
+        app:rectRightBottom="20dp"
+        app:rectRightTop="20dp"
+        app:strokeColorNormal="#FFFF0000"
+        app:strokeColorSelector="#FFFF44AA"
+        app:strokeWidth="10dp" />
+
+
+</android.support.constraint.ConstraintLayout>

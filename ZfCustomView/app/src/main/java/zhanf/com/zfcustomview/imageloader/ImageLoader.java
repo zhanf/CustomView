@@ -36,7 +36,9 @@ import java.util.concurrent.atomic.AtomicInteger;
 import zhanf.com.zfcustomview.R;
 
 /**
+ * Describe:三级缓存图片加载框架 使用LruCache DiskLruCache
  * Created by zhanFeng on 2017/3/22.
+ *
  */
 
 public class ImageLoader {

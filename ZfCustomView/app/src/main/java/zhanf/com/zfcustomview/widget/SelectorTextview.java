@@ -124,19 +124,20 @@ public class SelectorTextview extends AppCompatTextView {
     @Override
     protected void onDraw(Canvas canvas) {
 
-        if (isClickable()) {
+        if (isClickable() && isChangeStatus) {
 
-            if (isChangeStatus && isSelected) {
+            if (isSelected) {
+
                 gradientDrawable.setColor(colorSelector);
                 setBorder(strokeWidth, strokeColorSelector, strokeDashWidth, strokeDashGap);
                 setBackgroundDrawable(gradientDrawable);
 
-            }
+            } else {
 
-            if (isChangeStatus && !isSelected) {
                 gradientDrawable.setColor(colorNormal);
                 setBorder(strokeWidth, strokeColorNormal, strokeDashWidth, strokeDashGap);
                 setBackgroundDrawable(gradientDrawable);
+
             }
 
         }
