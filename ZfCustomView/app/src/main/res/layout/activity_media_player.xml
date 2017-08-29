@@ -9,24 +9,24 @@
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="300dp">
+        android:layout_height="wrap_content">
 
-        <SurfaceView
-            android:id="@+id/sfv_media_player"
+        <TextureView
+            android:id="@+id/tv_media_player"
             android:layout_width="match_parent"
-            android:layout_height="300dp" />
+            android:layout_height="280dp" />
 
         <zhanf.com.zfcustomview.widget.SelectorTextview
             android:id="@+id/stv_start"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
             android:layout_alignParentLeft="true"
             android:paddingBottom="10dp"
             android:paddingLeft="20dp"
             android:paddingRight="20dp"
             android:paddingTop="10dp"
             android:text="开始"
+            android:layout_alignParentBottom="true"
             android:textColor="@android:color/holo_blue_dark"
             android:textSize="17sp" />
 

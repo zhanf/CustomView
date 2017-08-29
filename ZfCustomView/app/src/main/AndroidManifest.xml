@@ -1,9 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="zhanf.com.zfcustomview">
+
     <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+
     <application
+        android:name=".app.application.App"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
@@ -18,7 +21,12 @@
             </intent-filter>
         </activity>
         <activity android:name=".main.activity.SelectorTvActivity" />
-        <activity android:name=".main.activity.MediaPlayerActivity"></activity>
+        <activity
+            android:name=".main.activity.MediaPlayerActivity"
+            android:hardwareAccelerated="true" />
+
+        <service android:name=".main.service.MediaPlayerService" />
+        <service android:name=".app.service.InitializeService" />
     </application>
 
 </manifest>

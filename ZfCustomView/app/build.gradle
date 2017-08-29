@@ -39,4 +39,6 @@ dependencies {
     compile 'com.squareup.okhttp3:logging-interceptor:3.8.1'
     testCompile 'junit:junit:4.12'
     annotationProcessor 'com.jakewharton:butterknife-compiler:8.8.1'
+
+    compile 'com.blankj:utilcode:1.8.4'
 }
