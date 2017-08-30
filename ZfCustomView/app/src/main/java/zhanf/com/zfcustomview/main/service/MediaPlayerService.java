@@ -4,7 +4,6 @@ import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.AssetFileDescriptor;
-import android.graphics.SurfaceTexture;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.os.Binder;
@@ -24,16 +23,23 @@ import zhanf.com.zfcustomview.app.application.App;
 
 public class MediaPlayerService extends Service implements IService,AudioManager.OnAudioFocusChangeListener, MediaPlayer.OnErrorListener {
 
+    private static final String MEDIA_PLAYER_URL = "media_player_url";
+
     private PlayerBinder playerBinder;
     private MediaPlayer mediaPlayer;
 
     private AssetFileDescriptor descriptor = App.getInstance().getResources().openRawResourceFd(R.raw.dream_it_possible);
     private AudioManager audioManager;
+    private String url;
 
 
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
+        url = intent.getStringExtra(MEDIA_PLAYER_URL);
+
+        playerBinder = new PlayerBinder(this,url);
+
         return playerBinder;
     }
 
@@ -42,8 +48,6 @@ public class MediaPlayerService extends Service implements IService,AudioManager
         super.onCreate();
 
         mediaPlayer = new MediaPlayer();
-        playerBinder = new PlayerBinder(this);
-
     }
 
     @Override
@@ -61,13 +65,13 @@ public class MediaPlayerService extends Service implements IService,AudioManager
         super.onDestroy();
     }
 
-    public void init(String url, SurfaceTexture surface) {
+    public void init(String url, Surface surface) {
         try {
             //mediaPlayer.setDataSource(MediaPlayerActivity.this, Uri.parse("android.resource://".concat(getPackageName()).concat("/") + R.raw.dream_it_possible));
             mediaPlayer.setDataSource(descriptor.getFileDescriptor(), descriptor.getStartOffset(), descriptor.getLength());//参数里的注释是直接播放sd卡上的视频
             audioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
 //            int result = audioManager.requestAudioFocus(this, AudioManager.STREAM_RING, AudioManager.AUDIOFOCUS_GAIN);
-            mediaPlayer.setSurface(new Surface(surface));
+            mediaPlayer.setSurface(surface);
             mediaPlayer.prepareAsync();
             mediaPlayer.setOnErrorListener(this);
             mediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
@@ -103,6 +107,11 @@ public class MediaPlayerService extends Service implements IService,AudioManager
     }
 
     @Override
+    public void setSurface(Surface surface) {
+        mediaPlayer.setSurface(surface);
+    }
+
+    @Override
     public void onAudioFocusChange(int focusChange) {
         switch (focusChange) {
             case AudioManager.AUDIOFOCUS_LOSS_TRANSIENT://Pause playback
@@ -135,16 +144,16 @@ public class MediaPlayerService extends Service implements IService,AudioManager
 
         private MediaPlayerService service;
 
-        private PlayerBinder(MediaPlayerService service) {
+        private PlayerBinder(MediaPlayerService service, String url) {
 
             reference = new WeakReference<>(service);
 
         }
 
-        public void init(String url, SurfaceTexture surfaceTexture) {
+        public void init(String url, Surface surface) {
             service = reference.get();
             if (null != service) {
-                service.init(url, surfaceTexture);
+                service.init(url, surface);
             }
         }
 
@@ -168,6 +177,13 @@ public class MediaPlayerService extends Service implements IService,AudioManager
                 service.stop();
                 service = null;
                 reference = null;
+            }
+        }
+
+        @Override
+        public void setSurface(Surface surface) {
+            if (null != service) {
+                service.setSurface(surface);
             }
         }
     }

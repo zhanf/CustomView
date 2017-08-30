@@ -8,6 +8,7 @@ import android.support.annotation.Nullable;
 import com.blankj.utilcode.util.Utils;
 
 import zhanf.com.zfcustomview.app.application.App;
+import zhanf.com.zfcustomview.app.application.CrashHandler;
 
 /**
  * Created by Administrator on 2017/8/29.
@@ -19,6 +20,13 @@ public class InitializeService extends IntentService {
 
     public InitializeService(){
         super("InitializeService");
+    }
+
+
+    public static void start(Context context) {
+        Intent intent = new Intent(context, InitializeService.class);
+        intent.setAction(ACTION_INIT);
+        context.startService(intent);
     }
 
     @Override
@@ -34,12 +42,8 @@ public class InitializeService extends IntentService {
     private void initApplication() {
 
         Utils.init(App.getInstance());
+        CrashHandler.init(new CrashHandler(getApplicationContext()));
 
     }
 
-    public static void start(Context context) {
-        Intent intent = new Intent(context, InitializeService.class);
-        intent.setAction(ACTION_INIT);
-        context.startService(intent);
-    }
 }

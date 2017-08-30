@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.support.v7.app.AppCompatActivity;
 import android.util.DisplayMetrics;
+import android.view.Surface;
 import android.view.TextureView;
 import android.widget.RelativeLayout;
 
@@ -18,6 +19,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import zhanf.com.zfcustomview.R;
+import zhanf.com.zfcustomview.main.service.IService;
 import zhanf.com.zfcustomview.main.service.MediaPlayerService;
 import zhanf.com.zfcustomview.widget.SelectorTextview;
 
@@ -33,6 +35,9 @@ public class MediaPlayerActivity extends AppCompatActivity {
     SelectorTextview stvStop;
     private MediaServiceConnection conn;
 
+    private Surface surfaceView;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -42,31 +47,40 @@ public class MediaPlayerActivity extends AppCompatActivity {
         initTextureListener();
     }
 
-    private SurfaceTexture surfaceTexture;
 
     private void initTextureListener() {
+
         tvMediaPlayer.setSurfaceTextureListener(new TextureView.SurfaceTextureListener() {
 
             @Override
             public void onSurfaceTextureAvailable(SurfaceTexture surface, int width, int height) {
-                surfaceTexture = surface;
-                conn = new MediaServiceConnection(MediaPlayerActivity.this);
-                bindService(new Intent(MediaPlayerActivity.this, MediaPlayerService.class), conn, Context.BIND_AUTO_CREATE);
+                surfaceView = new Surface(surface);
+                if (null == conn) {
+                    conn = new MediaServiceConnection(MediaPlayerActivity.this);
+                    Intent intent = new Intent(MediaPlayerActivity.this, MediaPlayerService.class);
+                    bindService(intent, conn, Context.BIND_AUTO_CREATE);
+                } else {
+                    conn.setSurface(surfaceView);
+                    conn.start();
+                }
             }
 
             @Override
             public void onSurfaceTextureSizeChanged(SurfaceTexture surface, int width, int height) {
-
+                System.out.println("onSurfaceTextureSizeChanged");
             }
 
             @Override
             public boolean onSurfaceTextureDestroyed(SurfaceTexture surface) {
+
+                conn.pause();
+                System.out.println("onSurfaceTextureDestroyed");
                 return false;
             }
 
             @Override
             public void onSurfaceTextureUpdated(SurfaceTexture surface) {
-
+                System.out.println("onSurfaceTextureUpdated");
             }
         });
     }
@@ -91,7 +105,7 @@ public class MediaPlayerActivity extends AppCompatActivity {
         conn.pause();
     }
 
-    public  class MediaServiceConnection implements ServiceConnection {
+    public class MediaServiceConnection implements ServiceConnection, IService {
 
         private WeakReference<MediaPlayerActivity> reference;
         private MediaPlayerService.PlayerBinder binder;
@@ -101,24 +115,35 @@ public class MediaPlayerActivity extends AppCompatActivity {
             reference = new WeakReference<>(activity);
 
         }
-        private void start() {
+
+        @Override
+        public void start() {
             binder.start();
         }
 
-        private void pause(){
+        @Override
+        public void pause() {
             binder.pause();
         }
-        private void stop(){
+
+        @Override
+        public void stop() {
             binder.stop();
         }
+
+        @Override
+        public void setSurface(Surface surface) {
+            binder.setSurface(surface);
+        }
+
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
             MediaPlayerActivity activity = reference.get();
             if (activity != null && !activity.isFinishing()) {
                 if (binder == null) {
                     binder = (MediaPlayerService.PlayerBinder) service;
+                    binder.init("", activity.surfaceView);
                 }
-                binder.init("", activity.surfaceTexture);
             }
         }
 
