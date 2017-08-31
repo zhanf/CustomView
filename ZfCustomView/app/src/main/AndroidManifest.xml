@@ -25,7 +25,7 @@
             android:name=".main.activity.MediaPlayerActivity"
             android:hardwareAccelerated="true" />
 
-        <service android:name=".main.service.MediaPlayerService" />
+        <service android:name=".mediaplayer.AudioPlayerService" />
         <service android:name=".app.service.InitializeService" />
     </application>
 

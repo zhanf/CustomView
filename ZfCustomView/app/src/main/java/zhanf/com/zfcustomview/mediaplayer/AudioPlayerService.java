@@ -1,4 +1,4 @@
-package zhanf.com.zfcustomview.main.service;
+package zhanf.com.zfcustomview.mediaplayer;
 
 import android.app.Service;
 import android.content.Context;
@@ -9,19 +9,19 @@ import android.media.MediaPlayer;
 import android.os.Binder;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
-import android.view.Surface;
 
 import java.io.IOException;
 import java.lang.ref.WeakReference;
 
 import zhanf.com.zfcustomview.R;
 import zhanf.com.zfcustomview.app.application.App;
+import zhanf.com.zfcustomview.main.service.IService;
 
 /**
  * Created by Administrator on 2017/8/28.
  */
 
-public class MediaPlayerService extends Service implements IService,AudioManager.OnAudioFocusChangeListener, MediaPlayer.OnErrorListener {
+public class AudioPlayerService extends Service implements IService, AudioManager.OnAudioFocusChangeListener, MediaPlayer.OnErrorListener {
 
     private static final String MEDIA_PLAYER_URL = "media_player_url";
 
@@ -38,7 +38,7 @@ public class MediaPlayerService extends Service implements IService,AudioManager
     public IBinder onBind(Intent intent) {
         url = intent.getStringExtra(MEDIA_PLAYER_URL);
 
-        playerBinder = new PlayerBinder(this,url);
+        playerBinder = new PlayerBinder(this, url);
 
         return playerBinder;
     }
@@ -65,13 +65,12 @@ public class MediaPlayerService extends Service implements IService,AudioManager
         super.onDestroy();
     }
 
-    public void init(String url, Surface surface) {
+    public void init(String url) {
         try {
             //mediaPlayer.setDataSource(MediaPlayerActivity.this, Uri.parse("android.resource://".concat(getPackageName()).concat("/") + R.raw.dream_it_possible));
             mediaPlayer.setDataSource(descriptor.getFileDescriptor(), descriptor.getStartOffset(), descriptor.getLength());//参数里的注释是直接播放sd卡上的视频
             audioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
 //            int result = audioManager.requestAudioFocus(this, AudioManager.STREAM_RING, AudioManager.AUDIOFOCUS_GAIN);
-            mediaPlayer.setSurface(surface);
             mediaPlayer.prepareAsync();
             mediaPlayer.setOnErrorListener(this);
             mediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
@@ -107,11 +106,6 @@ public class MediaPlayerService extends Service implements IService,AudioManager
     }
 
     @Override
-    public void setSurface(Surface surface) {
-        mediaPlayer.setSurface(surface);
-    }
-
-    @Override
     public void onAudioFocusChange(int focusChange) {
         switch (focusChange) {
             case AudioManager.AUDIOFOCUS_LOSS_TRANSIENT://Pause playback
@@ -132,28 +126,28 @@ public class MediaPlayerService extends Service implements IService,AudioManager
 
     @Override
     public boolean onError(MediaPlayer mp, int what, int extra) {
-        System.out.println("MediaPlayer:"+ what);
+        System.out.println("MediaPlayer:" + what);
         mediaPlayer.reset();
         return true;
     }
 
 
-    public static class PlayerBinder extends Binder implements IService{
+    public static class PlayerBinder extends Binder implements IService {
 
-        private WeakReference<MediaPlayerService> reference;
+        private WeakReference<AudioPlayerService> reference;
 
-        private MediaPlayerService service;
+        private AudioPlayerService service;
 
-        private PlayerBinder(MediaPlayerService service, String url) {
+        private PlayerBinder(AudioPlayerService service, String url) {
 
             reference = new WeakReference<>(service);
 
         }
 
-        public void init(String url, Surface surface) {
+        public void init(String url) {
             service = reference.get();
             if (null != service) {
-                service.init(url, surface);
+                service.init(url);
             }
         }
 
@@ -177,13 +171,6 @@ public class MediaPlayerService extends Service implements IService,AudioManager
                 service.stop();
                 service = null;
                 reference = null;
-            }
-        }
-
-        @Override
-        public void setSurface(Surface surface) {
-            if (null != service) {
-                service.setSurface(surface);
             }
         }
     }
