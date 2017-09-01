@@ -1,4 +1,4 @@
-package zhanf.com.zfcustomview.main.service;
+package zhanf.com.zfcustomview.mediamanager.audioplayer;
 
 /**
  * Created by Administrator on 2017/8/29.

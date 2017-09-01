@@ -1,4 +1,4 @@
-package zhanf.com.zfcustomview.mediaplayer;
+package zhanf.com.zfcustomview.mediamanager.audioplayer;
 
 import android.content.Context;
 import android.content.res.AssetFileDescriptor;
@@ -19,13 +19,13 @@ import zhanf.com.zfcustomview.app.application.App;
 public class MediaPlayerManager implements MediaPlayer.OnErrorListener, MediaPlayer.OnCompletionListener, AudioManager.OnAudioFocusChangeListener {
 
     public static final String ACTION_REPLAY = "rePlay";
-    public static final String ACTION_PAUSE = "pause";
     public static final String ACTION_STOP = "stop";
     public static final String ACTION_NEXT = "next";
     public static final String ACTION_PREV = "prev";
     public static final String ACTION_TO = "to";
     public static final String ACTION_ISPLAYING = "playing";
     public static final String ACTION_START = "start";
+    public static final String ACTION_PAUSE = "pause";
 
     public static final String ACTION_SET_PLAY_MODE = "setPlayMode";
 
@@ -50,7 +50,7 @@ public class MediaPlayerManager implements MediaPlayer.OnErrorListener, MediaPla
 
     private void init(String url, Surface surface) {
         try {
-            //mediaPlayer.setDataSource(MediaPlayerActivity.this, Uri.parse("android.resource://".concat(getPackageName()).concat("/") + R.raw.dream_it_possible));
+//            mediaPlayer.setDataSource(MediaPlayerActivity.this, Uri.parse("android.resource://".concat(getPackageName()).concat("/") + R.raw.dream_it_possible));
             mediaPlayer.setDataSource(descriptor.getFileDescriptor(), descriptor.getStartOffset(), descriptor.getLength());//参数里的注释是直接播放sd卡上的视频
 //            mediaPlayer.setDataSource(url);
             audioManager = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
@@ -154,7 +154,7 @@ public class MediaPlayerManager implements MediaPlayer.OnErrorListener, MediaPla
 
                 break;
             case AudioManager.AUDIOFOCUS_LOSS://Stop playback
-                audioManager.abandonAudioFocus(this);
+                mediaPlayer.pause();
                 break;
         }
     }

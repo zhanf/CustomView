@@ -1,11 +1,9 @@
-package zhanf.com.zfcustomview.mediaplayer;
+package zhanf.com.zfcustomview.mediamanager.audioplayer;
 
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.ServiceConnection;
 import android.os.IBinder;
-
-import zhanf.com.zfcustomview.main.service.IService;
 
 public class MediaServiceConnection implements ServiceConnection, IService {
 

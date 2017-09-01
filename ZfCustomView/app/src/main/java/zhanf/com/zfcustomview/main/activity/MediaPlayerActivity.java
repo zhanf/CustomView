@@ -13,7 +13,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import zhanf.com.zfcustomview.R;
-import zhanf.com.zfcustomview.mediaplayer.MediaPlayerManager;
+import zhanf.com.zfcustomview.mediamanager.mediaplayer.MediaPlayerController;
 import zhanf.com.zfcustomview.widget.SelectorTextview;
 
 public class MediaPlayerActivity extends AppCompatActivity {
@@ -28,10 +28,7 @@ public class MediaPlayerActivity extends AppCompatActivity {
     SelectorTextview stvStop;
 
     private Surface surfaceView;
-
-    private MediaPlayerManager mediaPlayerManager;
-
-
+    private MediaPlayerController mediaPlayerController;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,12 +56,11 @@ public class MediaPlayerActivity extends AppCompatActivity {
             @Override
             public void onSurfaceTextureAvailable(SurfaceTexture surface, int width, int height) {
                 surfaceView = new Surface(surface);
-                if (null == mediaPlayerManager) {
-                    mediaPlayerManager = new MediaPlayerManager("", surfaceView);
-                } else {
-                    mediaPlayerManager.setSurface(surfaceView);
-                    mediaPlayerManager.reStart();
+                if (null == mediaPlayerController) {
+                    mediaPlayerController = new MediaPlayerController("");
                 }
+                mediaPlayerController.playerForeground();
+                mediaPlayerController.play(surfaceView);
             }
 
             @Override
@@ -74,7 +70,8 @@ public class MediaPlayerActivity extends AppCompatActivity {
             @Override
             public boolean onSurfaceTextureDestroyed(SurfaceTexture surface) {
 
-                mediaPlayerManager.pauseAuto();
+                mediaPlayerController.playerBackground();
+                mediaPlayerController.pause();
                 return false;
             }
 
@@ -87,18 +84,19 @@ public class MediaPlayerActivity extends AppCompatActivity {
     @OnClick(R.id.stv_start)
     public void onStvStartClicked() {
         stvStart.setText(TextUtils.equals("暂停", stvStart.getText().toString().trim()) ? "播放" : "暂停");
-        mediaPlayerManager.play();
+        mediaPlayerController.play();
     }
 
     @OnClick(R.id.stv_next)
     public void onStvPauseClicked() {
-        mediaPlayerManager.changePlay("");
+        mediaPlayerController.next("");
     }
 
 
     @Override
     protected void onDestroy() {
-        mediaPlayerManager.onDestroy();
+        mediaPlayerController.destroy();
+        mediaPlayerController = null;
         super.onDestroy();
     }
 }

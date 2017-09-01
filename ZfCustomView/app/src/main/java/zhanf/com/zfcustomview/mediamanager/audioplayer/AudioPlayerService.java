@@ -1,4 +1,4 @@
-package zhanf.com.zfcustomview.mediaplayer;
+package zhanf.com.zfcustomview.mediamanager.audioplayer;
 
 import android.app.Service;
 import android.content.Context;
@@ -15,7 +15,6 @@ import java.lang.ref.WeakReference;
 
 import zhanf.com.zfcustomview.R;
 import zhanf.com.zfcustomview.app.application.App;
-import zhanf.com.zfcustomview.main.service.IService;
 
 /**
  * Created by Administrator on 2017/8/28.
@@ -37,9 +36,7 @@ public class AudioPlayerService extends Service implements IService, AudioManage
     @Override
     public IBinder onBind(Intent intent) {
         url = intent.getStringExtra(MEDIA_PLAYER_URL);
-
         playerBinder = new PlayerBinder(this, url);
-
         return playerBinder;
     }
 
