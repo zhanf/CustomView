@@ -7,7 +7,7 @@ import android.text.TextUtils;
 import android.util.DisplayMetrics;
 import android.view.Surface;
 import android.view.TextureView;
-import android.widget.RelativeLayout;
+import android.widget.FrameLayout;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -40,7 +40,7 @@ public class MediaPlayerActivity extends AppCompatActivity {
     }
 
     private void initTextureSize() {
-        RelativeLayout.LayoutParams layoutParams = (RelativeLayout.LayoutParams) tvMediaPlayer.getLayoutParams();
+        FrameLayout.LayoutParams layoutParams = (FrameLayout.LayoutParams) tvMediaPlayer.getLayoutParams();
         DisplayMetrics outMetrics = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(outMetrics);
         int width = outMetrics.widthPixels;
