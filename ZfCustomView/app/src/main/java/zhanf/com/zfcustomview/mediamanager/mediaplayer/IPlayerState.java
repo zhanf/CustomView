@@ -32,4 +32,9 @@ public interface IPlayerState {
 
     void release();
 
+    int getDuration();
+
+    int getCurrentPosition();
+
+
 }

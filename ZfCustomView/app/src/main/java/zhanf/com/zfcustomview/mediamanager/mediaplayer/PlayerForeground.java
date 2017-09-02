@@ -16,7 +16,8 @@ public class PlayerForeground implements IPlayerState {
     public static final String ACTION_RESET = "reset";
     public static final String ACTION_PAUSE = "pause";
     public static final String ACTION_PLAYING = "playing";
-    public static  String ACTION_STATUS = ACTION_INIT;
+    public static final String ACTION_RELEASE = "release";
+    public  String ACTION_STATUS = ACTION_INIT;
 
     private MediaPlayer mediaPlayer;
 
@@ -152,5 +153,14 @@ public class PlayerForeground implements IPlayerState {
     @Override
     public void stop() {
         mediaPlayer.stop();
+    }
+
+    public int getDuration(){
+        return mediaPlayer.getDuration();
+    }
+
+    @Override
+    public int getCurrentPosition(){
+        return mediaPlayer.getCurrentPosition();
     }
 }

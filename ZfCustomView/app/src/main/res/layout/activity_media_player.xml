@@ -18,7 +18,7 @@
         <android.support.v7.widget.AppCompatImageView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@android:color/holo_purple"/>
+            android:background="#aabd"/>
 
         <RelativeLayout
             android:layout_gravity="bottom"
@@ -28,9 +28,10 @@
                 android:id="@+id/sb_progress"
                 android:layout_width="match_parent"
                 style="@android:style/Widget.DeviceDefault.SeekBar"
+                android:max="100"
                 android:layout_height="wrap_content"/>
 
-            <zhanf.com.zfcustomview.widget.SelectorTextview
+            <zhanf.com.zfcustomview.widget.SelectorTextView
                 android:layout_below="@+id/sb_progress"
                 android:id="@+id/stv_start"
                 android:layout_width="wrap_content"
@@ -43,7 +44,7 @@
                 android:textColor="@android:color/holo_blue_dark"
                 android:textSize="17sp" />
 
-            <zhanf.com.zfcustomview.widget.SelectorTextview
+            <zhanf.com.zfcustomview.widget.SelectorTextView
                 android:layout_below="@+id/sb_progress"
                 android:id="@+id/stv_next"
                 android:layout_width="wrap_content"
@@ -59,7 +60,7 @@
                 android:textColor="@android:color/holo_red_dark"
                 android:textSize="17sp" />
 
-            <zhanf.com.zfcustomview.widget.SelectorTextview
+            <zhanf.com.zfcustomview.widget.SelectorTextView
                 android:layout_below="@+id/sb_progress"
                 android:id="@+id/stv_stop"
                 android:layout_width="wrap_content"

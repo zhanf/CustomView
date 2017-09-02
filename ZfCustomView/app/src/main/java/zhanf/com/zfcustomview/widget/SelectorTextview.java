@@ -19,7 +19,7 @@ import zhanf.com.zfcustomview.R;
  * 3，设置相应属性，描述如下
  */
 
-public class SelectorTextview extends AppCompatTextView {
+public class SelectorTextView extends AppCompatTextView {
 
     private boolean isSelected;//是否触摸状态
     private int colorSelector;//pressed 下的 背景色
@@ -38,15 +38,15 @@ public class SelectorTextview extends AppCompatTextView {
     private GradientDrawable gradientDrawable;
 
 
-    public SelectorTextview(Context context) {
+    public SelectorTextView(Context context) {
         this(context, null);
     }
 
-    public SelectorTextview(Context context, AttributeSet attrs) {
+    public SelectorTextView(Context context, AttributeSet attrs) {
         this(context, attrs, 0);
     }
 
-    public SelectorTextview(Context context, AttributeSet attrs, int defStyleAttr) {
+    public SelectorTextView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
 
         initStyleAttr(attrs);

@@ -8,24 +8,27 @@ import android.util.DisplayMetrics;
 import android.view.Surface;
 import android.view.TextureView;
 import android.widget.FrameLayout;
+import android.widget.SeekBar;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import zhanf.com.zfcustomview.R;
 import zhanf.com.zfcustomview.mediamanager.mediaplayer.MediaPlayerController;
-import zhanf.com.zfcustomview.widget.SelectorTextview;
+import zhanf.com.zfcustomview.widget.SelectorTextView;
 
 public class MediaPlayerActivity extends AppCompatActivity {
 
     @BindView(R.id.tv_media_player)
     TextureView tvMediaPlayer;
     @BindView(R.id.stv_start)
-    SelectorTextview stvStart;
+    SelectorTextView stvStart;
     @BindView(R.id.stv_next)
-    SelectorTextview stvPause;
+    SelectorTextView stvPause;
     @BindView(R.id.stv_stop)
-    SelectorTextview stvStop;
+    SelectorTextView stvStop;
+    @BindView(R.id.sb_progress)
+    SeekBar sbProgress;
 
     private Surface surfaceView;
     private MediaPlayerController mediaPlayerController;
@@ -36,7 +39,7 @@ public class MediaPlayerActivity extends AppCompatActivity {
         setContentView(R.layout.activity_media_player);
         ButterKnife.bind(this);
         initTextureSize();
-        initTextureListener();
+        initListener();
     }
 
     private void initTextureSize() {
@@ -49,7 +52,24 @@ public class MediaPlayerActivity extends AppCompatActivity {
         tvMediaPlayer.setLayoutParams(layoutParams);
     }
 
-    private void initTextureListener() {
+    private void initListener() {
+
+        sbProgress.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+
+            }
+        });
 
         tvMediaPlayer.setSurfaceTextureListener(new TextureView.SurfaceTextureListener() {
 
@@ -58,6 +78,19 @@ public class MediaPlayerActivity extends AppCompatActivity {
                 surfaceView = new Surface(surface);
                 if (null == mediaPlayerController) {
                     mediaPlayerController = new MediaPlayerController("");
+                    mediaPlayerController.setOnPreparedListener(new MediaPlayerController.OnPreparedListen() {
+                        @Override
+                        public void onPreparedListener(int duration) {
+                            sbProgress.setMax(duration);
+                        }
+                    });
+                    mediaPlayerController.setCurrentPositionCallback(new MediaPlayerController.CurrentPositionListen() {
+                        @Override
+                        public void getCurrentPosition(int currentPosition) {
+                            System.out.println("currentPosition_MediaPlayerActivity:" + currentPosition);
+                            sbProgress.setProgress(currentPosition);
+                        }
+                    });
                 }
                 mediaPlayerController.playerForeground();
                 mediaPlayerController.play(surfaceView);

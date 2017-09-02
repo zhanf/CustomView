@@ -83,4 +83,14 @@ public class PlayerBackground implements IPlayerState {
     public void release() {
         mediaPlayer.release();
     }
+
+    @Override
+    public int getDuration() {
+        return 0;
+    }
+
+    @Override
+    public int getCurrentPosition() {
+        return 0;
+    }
 }

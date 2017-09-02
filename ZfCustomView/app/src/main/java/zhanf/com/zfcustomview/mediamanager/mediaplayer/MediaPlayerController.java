@@ -4,9 +4,14 @@ import android.content.Context;
 import android.content.res.AssetFileDescriptor;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
+import android.os.Handler;
+import android.os.HandlerThread;
+import android.os.Message;
 import android.view.Surface;
+import android.widget.TextClock;
 
 import java.io.IOException;
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,11 +31,16 @@ public class MediaPlayerController implements IPlayerStateController, AudioManag
     private List<String> MediaList = new ArrayList<>();
     private PlayerForeground playerForeground;
     private PlayerBackground playerBackground;
-
     private AssetFileDescriptor descriptor = App.getInstance().getResources().openRawResourceFd(R.raw.dream_it_possible);
     private AudioFocusHelper audioFocusHelper;
+    private MediaHandler mediaHandler;
+    private  final int current_position_msg = 100;
+    private int duration;
+    private OnPreparedListen onPreparedListen;
+
 
     public MediaPlayerController(String url) {
+        mediaHandler = new MediaHandler(this);
         mediaPlayer = new MediaPlayer();
         context = App.getInstance();
         audioFocusHelper = AudioFocusHelper.getInstance(context);
@@ -49,11 +59,18 @@ public class MediaPlayerController implements IPlayerStateController, AudioManag
             mediaPlayer.setOnErrorListener(this);
             mediaPlayer.setOnCompletionListener(this);
             mediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+
                 @Override
                 public void onPrepared(MediaPlayer mp) {
-                    PlayerForeground.ACTION_STATUS = PlayerForeground.ACTION_PLAYING;
-                    mediaPlayer.seekTo(0);
+                    playerForeground.ACTION_STATUS = PlayerForeground.ACTION_PLAYING;
+                    if (null != onPreparedListen && 0 == duration) {
+                            duration = mediaPlayer.getDuration();
+                            onPreparedListen.onPreparedListener(duration);
+                    }
                     mediaPlayer.start();
+                    System.out.println("currentPosition_onPrepared");
+                    mediaHandler.sendEmptyMessageDelayed(current_position_msg,1000);
+                    mediaPlayer.seekTo(0);
                 }
             });
         } catch (IOException e) {
@@ -77,7 +94,7 @@ public class MediaPlayerController implements IPlayerStateController, AudioManag
         mState.play(surface);
     }
 
-    public void play(){
+    public void play() {
         mState.play();
     }
 
@@ -86,6 +103,7 @@ public class MediaPlayerController implements IPlayerStateController, AudioManag
     }
 
     public void stop() {
+        duration = 0;
         mState.stop();
     }
 
@@ -99,6 +117,14 @@ public class MediaPlayerController implements IPlayerStateController, AudioManag
 
     public void pre(String urlPre) {
         mState.pre(urlPre);
+    }
+
+    public int getDuration() {
+        return mState.getDuration();
+    }
+
+    public int getCurrentPosition() {
+        return mState.getCurrentPosition();
     }
 
     public void destroy() {
@@ -156,11 +182,56 @@ public class MediaPlayerController implements IPlayerStateController, AudioManag
     @Override
     public boolean onError(MediaPlayer mp, int what, int extra) {
         mState.reset();
+        duration = 0;
         return false;
     }
 
     @Override
     public void onCompletion(MediaPlayer mp) {
-        mState.release();
+        playerForeground.ACTION_STATUS = PlayerForeground.ACTION_RELEASE;
+//        mState.release();
+    }
+
+    private static class MediaHandler extends Handler {
+
+        private WeakReference<MediaPlayerController> reference;
+
+        private MediaHandler(MediaPlayerController mediaController) {
+            reference = new WeakReference<>(mediaController);
+        }
+
+        @Override
+        public void handleMessage(Message msg) {
+            MediaPlayerController mediaPlayerController = reference.get();
+//            System.out.println("currentPosition_handleMessage");
+            if (null != mediaPlayerController) {
+//                System.out.println("currentPosition_mediaPlayerController");
+                int currentPosition = mediaPlayerController.getCurrentPosition();
+//                System.out.println("currentPosition_mediaPlayerController"+currentPosition);
+                if (currentPosition > 0 && null != mediaPlayerController.currentPositionListen) {
+                    System.out.println("currentPosition_handleMessage:"+currentPosition);
+                    mediaPlayerController.currentPositionListen.getCurrentPosition(currentPosition);
+                    mediaPlayerController.mediaHandler.sendEmptyMessageDelayed(mediaPlayerController.current_position_msg,1000);
+                }
+            }
+        }
+    }
+
+    public interface CurrentPositionListen {
+        void getCurrentPosition(int currentPosition);
+    }
+
+    private CurrentPositionListen currentPositionListen;
+
+    public void setCurrentPositionCallback(CurrentPositionListen currentPositionListen) {
+        this.currentPositionListen = currentPositionListen;
+    }
+
+    public interface OnPreparedListen{
+        void onPreparedListener(int duration);
+    }
+
+    public void setOnPreparedListener(OnPreparedListen onPreparedListen) {
+        this.onPreparedListen = onPreparedListen;
     }
 }
