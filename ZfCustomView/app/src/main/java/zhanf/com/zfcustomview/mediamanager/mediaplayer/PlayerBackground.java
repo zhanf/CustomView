@@ -91,6 +91,10 @@ public class PlayerBackground implements IPlayerState {
 
     @Override
     public int getCurrentPosition() {
-        return 0;
+        return mediaPlayer.getCurrentPosition();
+    }
+
+    @Override
+    public void seekTo(int position) {
     }
 }

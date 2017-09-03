@@ -57,17 +57,20 @@ public class MediaPlayerActivity extends AppCompatActivity {
         sbProgress.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-
             }
 
             @Override
             public void onStartTrackingTouch(SeekBar seekBar) {
-
+                //手指触摸seekBar时停止自己更新seekBar进度条
+                mediaPlayerController.removeCallbacksAndMessages();
             }
 
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
-
+                //将视频跳转到进度条进度处
+                mediaPlayerController.seekTo(seekBar.getProgress());
+                //手指停止触摸seekBar时停止更新seekBar进度条
+                mediaPlayerController.sendPlayMessage();
             }
         });
 
@@ -78,12 +81,14 @@ public class MediaPlayerActivity extends AppCompatActivity {
                 surfaceView = new Surface(surface);
                 if (null == mediaPlayerController) {
                     mediaPlayerController = new MediaPlayerController("");
+                    //设置MediaPlayer Prepared成功的回调，得到视频时长设置给SeekBar设置最大进度
                     mediaPlayerController.setOnPreparedListener(new MediaPlayerController.OnPreparedListen() {
                         @Override
                         public void onPreparedListener(int duration) {
                             sbProgress.setMax(duration);
                         }
                     });
+                    //得到MediaPlayer当前播放进度回调并用于更新SeekBar进度
                     mediaPlayerController.setCurrentPositionCallback(new MediaPlayerController.CurrentPositionListen() {
                         @Override
                         public void getCurrentPosition(int currentPosition) {
@@ -92,6 +97,7 @@ public class MediaPlayerActivity extends AppCompatActivity {
                         }
                     });
                 }
+                //前台状态，开始播放
                 mediaPlayerController.playerForeground();
                 mediaPlayerController.play(surfaceView);
             }
@@ -102,7 +108,7 @@ public class MediaPlayerActivity extends AppCompatActivity {
 
             @Override
             public boolean onSurfaceTextureDestroyed(SurfaceTexture surface) {
-
+                //后台状态，暂停播放
                 mediaPlayerController.playerBackground();
                 mediaPlayerController.pause();
                 return false;
@@ -117,6 +123,7 @@ public class MediaPlayerActivity extends AppCompatActivity {
     @OnClick(R.id.stv_start)
     public void onStvStartClicked() {
         stvStart.setText(TextUtils.equals("暂停", stvStart.getText().toString().trim()) ? "播放" : "暂停");
+        //手动暂停/播放状态调用此方法
         mediaPlayerController.play();
     }
 
@@ -128,6 +135,7 @@ public class MediaPlayerActivity extends AppCompatActivity {
 
     @Override
     protected void onDestroy() {
+        //销毁MediaPlayer释放资源
         mediaPlayerController.destroy();
         mediaPlayerController = null;
         super.onDestroy();

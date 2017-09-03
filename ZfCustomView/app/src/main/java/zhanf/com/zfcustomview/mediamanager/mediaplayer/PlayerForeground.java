@@ -17,7 +17,7 @@ public class PlayerForeground implements IPlayerState {
     public static final String ACTION_PAUSE = "pause";
     public static final String ACTION_PLAYING = "playing";
     public static final String ACTION_RELEASE = "release";
-    public  String ACTION_STATUS = ACTION_INIT;
+    public  String actionStatus = ACTION_INIT;
 
     private MediaPlayer mediaPlayer;
 
@@ -28,7 +28,7 @@ public class PlayerForeground implements IPlayerState {
     @Override
     public void reset() {
         mediaPlayer.reset();
-        ACTION_STATUS = ACTION_RESET;
+        actionStatus = ACTION_RESET;
     }
 
     /**
@@ -46,10 +46,10 @@ public class PlayerForeground implements IPlayerState {
     @Override
     public void play(Surface surface) {
         setSurface(surface);
-        if (TextUtils.equals(ACTION_STATUS,ACTION_INIT)) {
+        if (TextUtils.equals(actionStatus,ACTION_INIT)) {
             start();
         } else {
-            if (TextUtils.equals(ACTION_STATUS,ACTION_PLAYING)) {
+            if (TextUtils.equals(actionStatus,ACTION_PLAYING)) {
                 mediaPlayer.start();
             }
         }
@@ -61,10 +61,10 @@ public class PlayerForeground implements IPlayerState {
     @Override
     public void play() {
         if (mediaPlayer.isPlaying()) {
-            ACTION_STATUS = ACTION_PAUSE;
+            actionStatus = ACTION_PAUSE;
             mediaPlayer.pause();
         } else {
-            ACTION_STATUS = ACTION_PLAYING;
+            actionStatus = ACTION_PLAYING;
             mediaPlayer.start();
         }
     }
@@ -113,7 +113,7 @@ public class PlayerForeground implements IPlayerState {
      */
     @Override
     public void destroy() {
-        ACTION_STATUS = ACTION_INIT;
+        actionStatus = ACTION_INIT;
         if (mediaPlayer != null) {
             if (mediaPlayer.isPlaying()) {
                 stop();
@@ -162,5 +162,10 @@ public class PlayerForeground implements IPlayerState {
     @Override
     public int getCurrentPosition(){
         return mediaPlayer.getCurrentPosition();
+    }
+
+    @Override
+    public void seekTo(int position) {
+        mediaPlayer.seekTo(position);
     }
 }

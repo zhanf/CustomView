@@ -36,5 +36,7 @@ public interface IPlayerState {
 
     int getCurrentPosition();
 
+    void seekTo(int position);
+
 
 }
