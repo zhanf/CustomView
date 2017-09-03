@@ -173,7 +173,7 @@ public class MediaPlayerController implements IPlayerStateController, AudioManag
     }
 
     public void seekTo(int position) {
-        Log.d(TAG, "seekTo"+position);
+        Log.d(TAG, "seekTo" + position);
         mState.seekTo(position);
     }
 
@@ -232,11 +232,11 @@ public class MediaPlayerController implements IPlayerStateController, AudioManag
 //        mState.release();
     }
 
-    public void sendPlayMessage(){
+    public void sendPlayMessage() {
         mediaHandler.sendEmptyMessage(current_position_msg);
     }
 
-    public void removeCallbacksAndMessages(){
+    public void removeCallbacksAndMessages() {
         mediaHandler.removeCallbacksAndMessages(null);
     }
 
