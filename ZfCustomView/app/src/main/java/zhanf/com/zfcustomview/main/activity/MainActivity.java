@@ -35,6 +35,7 @@ public class MainActivity extends AppCompatActivity {
 
         activityList.add("zhanf.com.zfcustomview.main.activity.SelectorTvActivity");
         activityList.add("zhanf.com.zfcustomview.main.activity.MediaPlayerActivity");
+        activityList.add("zhanf.com.zfcustomview.main.activity.TransparentActivity");
 
         adapter = new MainAdapter(this);
         adapter.setActivityList(activityList);
