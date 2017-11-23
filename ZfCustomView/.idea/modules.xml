@@ -3,9 +3,9 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/ZfCustomView.iml" filepath="$PROJECT_DIR$/ZfCustomView.iml" />
-      <module fileurl="file://$PROJECT_DIR$/ZfCustomView.iml" filepath="$PROJECT_DIR$/ZfCustomView.iml" />
+      <module fileurl="file://F:\project\CustomView\ZfCustomView\ZfCustomView.iml" filepath="F:\project\CustomView\ZfCustomView\ZfCustomView.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
-      <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
+      <module fileurl="file://F:\project\CustomView\ZfCustomView\app\app.iml" filepath="F:\project\CustomView\ZfCustomView\app\app.iml" />
     </modules>
   </component>
 </project>

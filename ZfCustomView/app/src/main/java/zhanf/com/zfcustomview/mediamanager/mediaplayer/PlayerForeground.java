@@ -6,8 +6,10 @@ import android.view.Surface;
 
 import java.io.IOException;
 
+import zhanf.com.zfcustomview.mediamanager.mediaplayer.IPlayerState;
+
 /**
- * Created by Administrator on 2017/9/1.
+ * Created by zhanf on 2017/9/1.
  */
 
 public class PlayerForeground implements IPlayerState {
@@ -16,8 +18,8 @@ public class PlayerForeground implements IPlayerState {
     public static final String ACTION_RESET = "reset";
     public static final String ACTION_PAUSE = "pause";
     public static final String ACTION_PLAYING = "playing";
-    public static final String ACTION_RELEASE = "release";
-    public  String actionStatus = ACTION_INIT;
+    public static final String ACTION_COMPLETE = "complete";
+    public String actionStatus = ACTION_INIT;
 
     private MediaPlayer mediaPlayer;
 
@@ -35,23 +37,18 @@ public class PlayerForeground implements IPlayerState {
      * 播放
      */
     @Override
-    public void start() {
+    public void prepareAsync() {
         mediaPlayer.prepareAsync();
     }
 
     /**
      * TextureView 可用时调用，自己识别之前是播放/暂停状态
-     * @param surface surface
+     *
      */
     @Override
-    public void play(Surface surface) {
-        setSurface(surface);
-        if (TextUtils.equals(actionStatus,ACTION_INIT)) {
-            start();
-        } else {
-            if (TextUtils.equals(actionStatus,ACTION_PLAYING)) {
-                mediaPlayer.start();
-            }
+    public void autoPlay() {
+        if (TextUtils.equals(actionStatus, ACTION_PLAYING)) {
+            mediaPlayer.start();
         }
     }
 
@@ -61,11 +58,15 @@ public class PlayerForeground implements IPlayerState {
     @Override
     public void play() {
         if (mediaPlayer.isPlaying()) {
-            actionStatus = ACTION_PAUSE;
-            mediaPlayer.pause();
+            if (TextUtils.equals(actionStatus, ACTION_PLAYING)) {
+                actionStatus = ACTION_PAUSE;
+                mediaPlayer.pause();
+            }
         } else {
-            actionStatus = ACTION_PLAYING;
-            mediaPlayer.start();
+            if (TextUtils.equals(actionStatus, ACTION_PAUSE)||TextUtils.equals(actionStatus, ACTION_COMPLETE)) {
+                actionStatus = ACTION_PLAYING;
+                mediaPlayer.start();
+            }
         }
     }
 
@@ -78,8 +79,17 @@ public class PlayerForeground implements IPlayerState {
         mediaPlayer.prepareAsync();
     }
 
+    @Override
+    public void start() {
+        if (TextUtils.equals(actionStatus, ACTION_PAUSE)||TextUtils.equals(actionStatus, ACTION_COMPLETE)) {
+            actionStatus = ACTION_PLAYING;
+            mediaPlayer.start();
+        }
+    }
+
     /**
      * 播放下一个
+     *
      * @param urlNext url
      */
     @Override
@@ -95,6 +105,7 @@ public class PlayerForeground implements IPlayerState {
 
     /**
      * 播放上一个
+     *
      * @param urlPre url
      */
     @Override
@@ -125,6 +136,7 @@ public class PlayerForeground implements IPlayerState {
 
     /**
      * TextureView 可用时调用
+     *
      * @param surface surface
      */
     @Override
@@ -155,12 +167,12 @@ public class PlayerForeground implements IPlayerState {
         mediaPlayer.stop();
     }
 
-    public int getDuration(){
+    public int getDuration() {
         return mediaPlayer.getDuration();
     }
 
     @Override
-    public int getCurrentPosition(){
+    public int getCurrentPosition() {
         return mediaPlayer.getCurrentPosition();
     }
 

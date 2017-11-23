@@ -3,8 +3,10 @@ package zhanf.com.zfcustomview.mediamanager.mediaplayer;
 import android.media.MediaPlayer;
 import android.view.Surface;
 
+import zhanf.com.zfcustomview.mediamanager.mediaplayer.IPlayerState;
+
 /**
- * Created by Administrator on 2017/9/1.
+ * Created by zhanf on 2017/9/1.
  */
 
 public class PlayerBackground implements IPlayerState {
@@ -22,12 +24,12 @@ public class PlayerBackground implements IPlayerState {
     }
 
     @Override
-    public void start() {
+    public void prepareAsync() {
 
     }
 
     @Override
-    public void play(Surface surface) {
+    public void autoPlay() {
 
     }
 
@@ -50,6 +52,11 @@ public class PlayerBackground implements IPlayerState {
 
     @Override
     public void reStart() {
+
+    }
+
+    @Override
+    public void start() {
 
     }
 

@@ -10,9 +10,9 @@ public interface IPlayerState {
 
     void reset();
 
-    void start();
+    void prepareAsync();
 
-    void play(Surface surface);
+    void autoPlay();
 
     void play();
 
@@ -21,6 +21,8 @@ public interface IPlayerState {
     void stop();
 
     void reStart();
+
+    void start();
 
     void next(String urlNext);
 

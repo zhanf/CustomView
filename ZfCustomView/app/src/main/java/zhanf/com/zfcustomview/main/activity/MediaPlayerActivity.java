@@ -80,7 +80,7 @@ public class MediaPlayerActivity extends AppCompatActivity {
             public void onSurfaceTextureAvailable(SurfaceTexture surface, int width, int height) {
                 surfaceView = new Surface(surface);
                 if (null == mediaPlayerController) {
-                    mediaPlayerController = new MediaPlayerController("");
+                    mediaPlayerController = new MediaPlayerController("");//FIXME 添加url
                     //设置MediaPlayer Prepared成功的回调，得到视频时长设置给SeekBar设置最大进度
                     mediaPlayerController.setOnPreparedListener(new MediaPlayerController.OnPreparedListen() {
                         @Override
@@ -99,7 +99,8 @@ public class MediaPlayerActivity extends AppCompatActivity {
                 }
                 //前台状态，开始播放
                 mediaPlayerController.playerForeground();
-                mediaPlayerController.play(surfaceView);
+                mediaPlayerController.setSurface(surfaceView);
+                mediaPlayerController.autoPlay();
             }
 
             @Override
@@ -124,6 +125,7 @@ public class MediaPlayerActivity extends AppCompatActivity {
     public void onStvStartClicked() {
         stvStart.setText(TextUtils.equals("暂停", stvStart.getText().toString().trim()) ? "播放" : "暂停");
         //手动暂停/播放状态调用此方法
+        mediaPlayerController.start();
         mediaPlayerController.play();
     }
 

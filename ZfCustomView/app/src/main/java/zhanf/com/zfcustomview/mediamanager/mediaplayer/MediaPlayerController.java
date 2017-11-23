@@ -21,13 +21,15 @@ import zhanf.com.zfcustomview.R;
 import zhanf.com.zfcustomview.app.application.App;
 import zhanf.com.zfcustomview.mediamanager.AudioFocusHelper;
 
+import static zhanf.com.zfcustomview.mediamanager.mediaplayer.PlayerForeground.ACTION_COMPLETE;
+import static zhanf.com.zfcustomview.mediamanager.mediaplayer.PlayerForeground.ACTION_INIT;
 import static zhanf.com.zfcustomview.mediamanager.mediaplayer.PlayerForeground.ACTION_PLAYING;
 
 /**
  * Created by Administrator on 2017/9/1.
  */
 
-public class MediaPlayerController implements IPlayerStateController, AudioManager.OnAudioFocusChangeListener, MediaPlayer.OnErrorListener, MediaPlayer.OnCompletionListener {
+public class MediaPlayerController implements IPlayerStateController, MediaPlayer.OnErrorListener, MediaPlayer.OnCompletionListener {
 
     private static final String TAG = "MediaPlayerManager";
     private IPlayerState mState;
@@ -36,8 +38,6 @@ public class MediaPlayerController implements IPlayerStateController, AudioManag
     private List<String> MediaList = new ArrayList<>();
     private PlayerForeground playerForeground;
     private PlayerBackground playerBackground;
-    private AssetFileDescriptor descriptor = App.getInstance().getResources().openRawResourceFd(R.raw.dream_it_possible);
-    private AudioFocusHelper audioFocusHelper;
     private MediaHandler mediaHandler;
     private final int current_position_msg = 100;
     private int duration;
@@ -48,19 +48,16 @@ public class MediaPlayerController implements IPlayerStateController, AudioManag
         mediaHandler = new MediaHandler(this);
         mediaPlayer = new MediaPlayer();
         context = App.getInstance();
-        audioFocusHelper = AudioFocusHelper.getInstance(context);
+        if (TextUtils.isEmpty(url))
+            throw new IllegalArgumentException("url not be empty");
         init(url);
     }
 
     private void init(String url) {
         try {
             Log.d(TAG, "init");
-//            mediaPlayer.setDataSource(url);
-            mediaPlayer.setDataSource(descriptor.getFileDescriptor(), descriptor.getStartOffset(), descriptor.getLength());//参数里的注释是直接播放sd卡上的视频
+            mediaPlayer.setDataSource(url);//参数里的注释是直接播放sd卡上的视频
             mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
-
-            audioFocusHelper.setAudioFocusChangeListener(this);
-            audioFocusHelper.startFocus();
 
             mediaPlayer.setOnErrorListener(this);
             mediaPlayer.setOnCompletionListener(this);
@@ -74,13 +71,14 @@ public class MediaPlayerController implements IPlayerStateController, AudioManag
                         duration = mediaPlayer.getDuration();
                         onPreparedListen.onPreparedListener(duration);
                     }
+                    mediaPlayer.seekTo(0);
                     mediaPlayer.start();
                     mediaHandler.sendEmptyMessageDelayed(current_position_msg, 1000);
-                    mediaPlayer.seekTo(0);
                 }
             });
         } catch (IOException e) {
             e.printStackTrace();
+            Log.d(TAG, e.getMessage());
         }
     }
 
@@ -94,14 +92,17 @@ public class MediaPlayerController implements IPlayerStateController, AudioManag
     }
 
     public void start() {
-        Log.d(TAG, "start");
-        mState.start();
+        Log.d(TAG, "prepareAsync");
+        if (TextUtils.equals(playerForeground.actionStatus, ACTION_INIT)) {
+            mState.prepareAsync();
+        }
     }
 
-    public void play(Surface surface) {
+    public void autoPlay() {
         Log.d(TAG, "play()");
-        mState.play(surface);
-        if (TextUtils.equals(playerForeground.actionStatus, ACTION_PLAYING)) {
+        mState.autoPlay();
+        if (TextUtils.equals(playerForeground.actionStatus, ACTION_PLAYING) ||
+                TextUtils.equals(playerForeground.actionStatus, ACTION_COMPLETE)) {
             mediaHandler.sendEmptyMessage(current_position_msg);
         }
     }
@@ -109,7 +110,8 @@ public class MediaPlayerController implements IPlayerStateController, AudioManag
     public void play() {
         Log.d(TAG, "play");
         mState.play();
-        if (TextUtils.equals(playerForeground.actionStatus, ACTION_PLAYING)) {
+        if (TextUtils.equals(playerForeground.actionStatus, ACTION_PLAYING) ||
+                TextUtils.equals(playerForeground.actionStatus, ACTION_COMPLETE)) {
             mediaHandler.sendEmptyMessage(current_position_msg);
         }
     }
@@ -153,23 +155,28 @@ public class MediaPlayerController implements IPlayerStateController, AudioManag
 
     public void destroy() {
         Log.d(TAG, "destroy");
-        audioFocusHelper.release();
-        mediaHandler.removeCallbacksAndMessages(null);
+        if (null != mediaHandler) {
+            mediaHandler.removeCallbacksAndMessages(null);
+            mediaHandler = null;
+        }
         if (null != playerForeground) {
             playerForeground.destroy();
+            playerForeground = null;
         }
         if (null != playerBackground) {
             playerBackground.destroy();
+            playerBackground = null;
         }
-        mediaHandler = null;
-        playerForeground = null;
-        playerBackground = null;
-//        mState.destroy();
     }
 
+    /**
+     * 每次至前台时需要调用，否则回到前台时黑屏
+     * @param surface
+     */
     public void setSurface(Surface surface) {
         Log.d(TAG, "setSurface");
-        mState.setSurface(surface);
+        if (null != mState)
+            mState.setSurface(surface);
     }
 
     public void seekTo(int position) {
@@ -196,28 +203,6 @@ public class MediaPlayerController implements IPlayerStateController, AudioManag
     }
 
     @Override
-    public void onAudioFocusChange(int focusChange) {
-        switch (focusChange) {
-            case AudioManager.AUDIOFOCUS_LOSS_TRANSIENT://Pause playback，短时间失去焦点
-                Log.d(TAG, "AUDIOFOCUS_LOSS_TRANSIENT");
-                mediaPlayer.pause();
-                break;
-            case AudioManager.AUDIOFOCUS_GAIN://Resume playback，重新获得焦点
-                Log.d(TAG, "AUDIOFOCUS_GAIN");
-                mediaPlayer.start();
-                break;
-            case AudioManager.AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK://
-                Log.d(TAG, "AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK");
-                break;
-            case AudioManager.AUDIOFOCUS_LOSS://Stop playback,长时间失去焦点
-                Log.d(TAG, "AUDIOFOCUS_LOSS");
-                audioFocusHelper.stopFocus();
-                break;
-        }
-
-    }
-
-    @Override
     public boolean onError(MediaPlayer mp, int what, int extra) {
         Log.d(TAG, "onError");
         mState.reset();
@@ -228,7 +213,7 @@ public class MediaPlayerController implements IPlayerStateController, AudioManag
     @Override
     public void onCompletion(MediaPlayer mp) {
         Log.d(TAG, "onCompletion");
-        playerForeground.actionStatus = PlayerForeground.ACTION_RELEASE;
+        playerForeground.actionStatus = ACTION_COMPLETE;
 //        mState.release();
     }
 
