@@ -7,7 +7,8 @@
     tools:context="zhanf.com.zfcustomview.main.activity.MainActivity">
 
     <android.support.v7.widget.RecyclerView
-        android:background="#aa00"
+        android:background="#0b000000"
+        android:paddingTop="25dp"
         android:id="@+id/rv_main"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">

@@ -7,7 +7,7 @@ import android.widget.Toast;
 
 import zhanf.com.zfcustomview.R;
 
-public class SelectorTvActivity extends AppCompatActivity {
+public class SelectorTvActivity extends SimpleActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

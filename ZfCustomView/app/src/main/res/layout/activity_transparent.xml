@@ -44,9 +44,4 @@
         android:background="@null"
         android:button="@drawable/switch_button" />
 
-    <zhanf.com.zfcustomview.widget.VerticalProgressBar
-        android:background="@null"
-        android:layout_width="40dp"
-        android:layout_height="300dp" />
-
 </LinearLayout>

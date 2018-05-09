@@ -25,5 +25,16 @@
         <attr name="colorNormal" format="color" />
     </declare-styleable>
 
+    <declare-styleable name="style_histogram_bar">
+
+        <attr name="colorScore" format="color" />
+        <attr name="colorCategory" format="color" />
+        <attr name="colorHistogram" format="color" />
+        <attr name="textSizeCategory" format="dimension" />
+        <attr name="textSizeScore" format="dimension" />
+        <attr name="histogramRadius" format="dimension" />
+
+    </declare-styleable>
+
 
 </resources>

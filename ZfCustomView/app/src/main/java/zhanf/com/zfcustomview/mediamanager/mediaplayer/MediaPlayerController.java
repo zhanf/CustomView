@@ -43,20 +43,21 @@ public class MediaPlayerController implements IPlayerStateController, MediaPlaye
     private int duration;
     private OnPreparedListen onPreparedListen;
 
+    private AssetFileDescriptor descriptor = App.getInstance().getResources().openRawResourceFd(R.raw.dream_it_possible);
 
     public MediaPlayerController(String url) {
         mediaHandler = new MediaHandler(this);
         mediaPlayer = new MediaPlayer();
         context = App.getInstance();
-        if (TextUtils.isEmpty(url))
-            throw new IllegalArgumentException("url not be empty");
+//        if (TextUtils.isEmpty(url))
+//            throw new IllegalArgumentException("url not be empty");
         init(url);
     }
 
     private void init(String url) {
         try {
             Log.d(TAG, "init");
-            mediaPlayer.setDataSource(url);//参数里的注释是直接播放sd卡上的视频
+            mediaPlayer.setDataSource(descriptor.getFileDescriptor(), descriptor.getStartOffset(), descriptor.getLength());//参数里的注释是直接播放sd卡上的视频
             mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
 
             mediaPlayer.setOnErrorListener(this);

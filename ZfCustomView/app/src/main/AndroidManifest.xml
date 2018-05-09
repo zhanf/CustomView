@@ -28,8 +28,10 @@
         <service android:name=".mediamanager.audioplayer.AudioPlayerService" />
         <service android:name=".app.service.InitializeService" />
 
-        <activity android:name=".main.activity.TransparentActivity"
-            android:theme="@style/TranslucentFullScreenTheme"></activity>
+        <activity
+            android:name=".main.activity.TransparentActivity"
+            android:theme="@style/TranslucentFullScreenTheme" />
+        <activity android:name=".main.activity.HistogramActivity"/>
     </application>
 
 </manifest>

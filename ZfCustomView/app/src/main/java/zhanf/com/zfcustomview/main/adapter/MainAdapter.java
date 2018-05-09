@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import zhanf.com.zfcustomview.R;
+import zhanf.com.zfcustomview.widget.SelectorTextView;
 
 /**
  * Created by Administrator on 2017/8/25.
@@ -23,18 +24,18 @@ import zhanf.com.zfcustomview.R;
 public class MainAdapter extends RecyclerView.Adapter<MainAdapter.ViewHolder> {
 
     private Activity context;
-    private ArrayList<String> activityList;
+    private ArrayList<Class<? extends AppCompatActivity>> activityList;
 
 
     public ArrayList getActivityList() {
         return activityList;
     }
 
-    public void setActivityList(ArrayList<String> activityList) {
+    public void setActivityList(ArrayList<Class<? extends AppCompatActivity>> activityList) {
         this.activityList = activityList;
     }
 
-    public void addActivityList(String clazz) {
+    public void addActivityList(Class<? extends AppCompatActivity> clazz) {
         if (null == activityList) {
             activityList = new ArrayList<>();
         }
@@ -48,27 +49,20 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.ViewHolder> {
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        ViewHolder viewHolder = new ViewHolder(LayoutInflater.from(context).inflate(R.layout.item_main, parent, false));
-        return viewHolder;
+        return new ViewHolder(LayoutInflater.from(context).inflate(R.layout.item_main, parent, false));
     }
 
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
 
-        final String clazz = activityList.get(position);
-        holder.tvMainItem.setText(clazz);
+        final Class<? extends AppCompatActivity> clazz = activityList.get(position);
+        holder.tvMainItem.setText(clazz.getSimpleName());
 
         holder.tvMainItem.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Class<? extends AppCompatActivity> aClass = null;
-                try {
-                    aClass = (Class<? extends AppCompatActivity>) Class.forName(clazz);
-                    Intent intent = new Intent(context, aClass);
-                    context.startActivity(intent);
-                } catch (ClassNotFoundException e) {
-                    e.printStackTrace();
-                }
+                Intent intent = new Intent(context, clazz);
+                context.startActivity(intent);
             }
         });
     }
@@ -82,7 +76,7 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.ViewHolder> {
         @BindView(R.id.iv_main_item)
         ImageView ivMainItem;
         @BindView(R.id.tv_main_item)
-        TextView tvMainItem;
+        SelectorTextView tvMainItem;
 
         ViewHolder(View itemView) {
             super(itemView);
