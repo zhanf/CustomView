@@ -111,7 +111,6 @@ public class HistogramBar extends View {
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-        int mHeight = getHeight();
         int mWidth = getWidth();
 
         //1. 先画分数类型的文字
@@ -124,7 +123,7 @@ public class HistogramBar extends View {
         canvas.drawText("平均分数", getPaddingLeft(), getTextHeight(mPaintText) + getPaddingTop(), mPaintText);
 
         //2. 画刻度分割线和分割线文字
-        int histogramHeight = mHeight - getCategoryTextHeight() - scaleTextHeight - getPaddingBottom();//柱状图总高度
+        int histogramHeight = getHeight() - getCategoryTextHeight() - scaleTextHeight - getPaddingBottom();//柱状图总高度
         Log.d(TAG, "柱状图总高度：" + histogramHeight);
 
         int scaleText = 100 / 5;
@@ -137,18 +136,18 @@ public class HistogramBar extends View {
         for (int i = 0; i < 5; i++) {
             float startY = (float) (scaleTextHeight + (histogramHeight * i / 5));
             Log.d(TAG, "LineY - " + i + "= " + startY);
-            mPath.moveTo(getPaddingLeft() + getScaleTextWidth("100"), (startY + 0.5f));
+            mPath.moveTo(getPaddingLeft() + getTextWidth("100"), (startY + 0.5f));
             mPath.lineTo(mWidth - getPaddingRight(), (startY + 0.5f));
             canvas.drawPath(mPath, mPaintText);
-            canvas.drawText(String.valueOf(100 - scaleText * i), getPaddingLeft() + getScaleTextWidth("100") - getScaleTextWidth(String.valueOf(100 - scaleText * i)), startY - (getTextAscent() / 2), mPaintText);
+            canvas.drawText(String.valueOf(100 - scaleText * i), getPaddingLeft() + getTextWidth("100") - getTextWidth(String.valueOf(100 - scaleText * i)), startY - (getTextAscent() / 2), mPaintText);
         }
         //2.2 画最底下一行（基准为0）的刻度线和文字
         //最后一行刻度 Y 坐标
         lastRowLocationY = scaleTextHeight + histogramHeight;
-        mPath.moveTo(getPaddingLeft() + getScaleTextWidth("100"), (lastRowLocationY + 0.5f));
+        mPath.moveTo(getPaddingLeft() + getTextWidth("100"), (lastRowLocationY + 0.5f));
         mPath.lineTo(mWidth - getPaddingRight(), (lastRowLocationY + 0.5f));
         canvas.drawPath(mPath, mPaintText);
-        canvas.drawText("0", getPaddingLeft() + getScaleTextWidth("100") - getScaleTextWidth("0"), lastRowLocationY - (getTextAscent() / 2), mPaintText);
+        canvas.drawText("0", getPaddingLeft() + getTextWidth("100") - getTextWidth("0"), lastRowLocationY - (getTextAscent() / 2), mPaintText);
 
         try {
             //3. 画柱状图和底部分类的文字
@@ -159,7 +158,7 @@ public class HistogramBar extends View {
             float categoryWidth = getCategoryWidth(getHistogramWidth());//柱状图每个刻度宽度
             for (int i = 0; i < categoryTextList.size(); i++) {
                 String category = categoryTextList.get(i);
-                int scaleTextWidth = getScaleTextWidth(category);
+                int scaleTextWidth = getTextWidth(category);
                 canvas.drawText(category, categoryTextLocationX + categoryWidth * i - scaleTextWidth / 2, lastRowLocationY + getTextHeight(mPaintText), mPaintText);
                 float score = scoreTextList.get(i);
                 if (currentHistogramProgress[i] < score - 5) {
@@ -170,12 +169,12 @@ public class HistogramBar extends View {
                 }
                 Log.d(TAG, "HistogramTop - " + i + "= " + (float) (scaleTextHeight + ((100 - score) * (lastRowLocationY - scaleTextHeight)) / 100));
                 if (i < categoryTextList.size() / 2) {//打印日志用于查看柱状图左右是否对称
-                    Log.d(TAG, "onDrawLeft: " + (categoryTextLocationX + (categoryWidth * i) - rectWidth / 2 - getScaleTextWidth("100")));
+                    Log.d(TAG, "onDrawLeft: " + (categoryTextLocationX + (categoryWidth * i) - rectWidth / 2 - getTextWidth("100")));
                 } else {
                     Log.d(TAG, "onDrawRight: " + (getWidth() - (categoryTextLocationX + (categoryWidth * i) + rectWidth / 2)));
                 }
                 rectF.set(categoryTextLocationX + (categoryWidth * i) - rectWidth / 2, (float) (scaleTextHeight + ((100 - currentHistogramProgress[i]) * (lastRowLocationY - scaleTextHeight)) / 100),
-                        categoryTextLocationX + (categoryWidth * i) + rectWidth / 2, lastRowLocationY);
+                        categoryTextLocationX + (categoryWidth * i) + rectWidth / 2, lastRowLocationY + 1);
                 canvas.drawRoundRect(rectF, histogramRadius, histogramRadius, mPaintRect);
             }
         } catch (Exception e) {
@@ -200,11 +199,11 @@ public class HistogramBar extends View {
      * @return
      */
     private int getHistogramWidth() {
-        return getWidth() - getScaleTextWidth("100") - getPaddingRight() - getPaddingLeft();
+        return getWidth() - getTextWidth("100") - getPaddingRight() - getPaddingLeft();
     }
 
     private int getFirstRectCenterLineX() {
-        return getPaddingLeft() + getScaleTextWidth("100") + ConvertUtils.dp2px(20) + rectWidth / 2;
+        return getPaddingLeft() + getTextWidth("100") + ConvertUtils.dp2px(20) + rectWidth / 2;
     }
 
     float downX;
@@ -254,16 +253,17 @@ public class HistogramBar extends View {
     }
 
     /**
-     * 获取底部的分类文字的高度（此处默认给了 20dp）
+     * 获取底部的分类文字的高度
      *
      * @return
      */
     public int getCategoryTextHeight() {
-        return ConvertUtils.dp2px(20);
+        mPaintText.setTextSize(textSizeCategory);
+        return getTextHeight(mPaintText) + ConvertUtils.dp2px(2);
     }
 
     /**
-     * 获取文字的总高度坐标
+     * 获取文字高度的中心相对其基准线的偏离位置
      *
      * @param paint
      * @return
@@ -284,12 +284,12 @@ public class HistogramBar extends View {
     }
 
     /**
-     * 获取显示的文字宽度
+     * 获取文字的宽度
      *
      * @param text
      * @return
      */
-    private int getScaleTextWidth(String text) {
+    private int getTextWidth(String text) {
         int textWidth = (int) mPaintText.measureText(text);
         textWidth += ConvertUtils.dp2px(2);
         return textWidth;
