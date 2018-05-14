@@ -3,7 +3,7 @@
 
 #####SelectorTextView 按压改变状态的TextView
 
-![SelectorTextView](https://github.com/zhanf/CustomView/blob/master/images/SelectorTextview.gif?raw=true)
+![SelectorTextView](https://github.com/zhanf/CustomView/blob/master/images/selectorTextview.gif)
 ```
 使用：
 1.clickable = "true"
