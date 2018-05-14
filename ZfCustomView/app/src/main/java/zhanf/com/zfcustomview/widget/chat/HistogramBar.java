@@ -1,10 +1,8 @@
 package zhanf.com.zfcustomview.widget.chat;
 
 import android.content.Context;
-import android.content.Intent;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.DashPathEffect;
 import android.graphics.Paint;
 import android.graphics.Path;
@@ -12,16 +10,16 @@ import android.graphics.RectF;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
 
 import com.blankj.utilcode.util.ConvertUtils;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.List;
 
 import zhanf.com.zfcustomview.R;
+import zhanf.com.zfcustomview.utils.ToastUtil;
 
 /**
  * 柱状图
@@ -32,7 +30,7 @@ public class HistogramBar extends View {
 
     public static final String TAG = "HistogramBar";
 
-    private Paint mPaint;
+    private Paint mPaintText;
     private Paint mPaintRect;//矩形柱状图画笔
     private RectF rectF;//矩形柱状图路劲
     private Path mPath;//虚线刻度的路径
@@ -61,7 +59,11 @@ public class HistogramBar extends View {
     private int textSizeCategory;//分类文字大小
     private int textSizeScore;//分数文字大小
     private int histogramRadius;//矩形柱状图圆角
-    private float[] currentHistogramProgress = new float[]{0.0f,0.0f,0.0f,0.0f,0.0f,0.0f,0.0f};//当前进度，用于实现矩形动画
+    private float[] currentHistogramProgress = new float[]{0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f};//当前进度，用于实现矩形动画
+    private int scaleTextHeight;//纵坐标类型文字的高度
+    private int lastRowLocationY;//最后一行刻度 Y 坐标
+    private int selectHistogram = -1;//选中矩形的柱状图
+    private boolean isTouchRect;//是否选中 柱状图
 
     public HistogramBar(Context context) {
         this(context, null);
@@ -81,10 +83,10 @@ public class HistogramBar extends View {
         mPath = new Path();
         rectF = new RectF();
 
-        mPaint = new Paint();
-        mPaint.setAntiAlias(true);
-        mPaint.setPathEffect(new DashPathEffect(new float[]{ConvertUtils.dp2px(2), ConvertUtils.dp2px(2)}, 20));
-        mPaint.setStyle(Paint.Style.STROKE);
+        mPaintText = new Paint();
+        mPaintText.setAntiAlias(true);
+        mPaintText.setPathEffect(new DashPathEffect(new float[]{ConvertUtils.dp2px(2), ConvertUtils.dp2px(2)}, 20));
+        mPaintText.setStyle(Paint.Style.STROKE);
 
         mPaintRect = new Paint();
         mPaintRect.setAntiAlias(true);
@@ -113,12 +115,13 @@ public class HistogramBar extends View {
         int mWidth = getWidth();
 
         //1. 先画分数类型的文字
-        mPaint.setTextSize(textSizeCategory);
-        int scaleTextHeight = getTextHeight(mPaint) + ConvertUtils.dp2px(10) + getPaddingTop();//纵坐标类型文字的高度
+        mPaintText.setTextSize(textSizeCategory);
+        //纵坐标类型文字的高度
+        scaleTextHeight = getTextHeight(mPaintText) + ConvertUtils.dp2px(10) + getPaddingTop();
 
-        mPaint.setFakeBoldText(true);
-        mPaint.setColor(colorCategory);
-        canvas.drawText("平均分数", getPaddingLeft(), getTextHeight(mPaint) + getPaddingTop(), mPaint);
+        mPaintText.setFakeBoldText(true);
+        mPaintText.setColor(colorCategory);
+        canvas.drawText("平均分数", getPaddingLeft(), getTextHeight(mPaintText) + getPaddingTop(), mPaintText);
 
         //2. 画刻度分割线和分割线文字
         int histogramHeight = mHeight - getCategoryTextHeight() - scaleTextHeight - getPaddingBottom();//柱状图总高度
@@ -126,9 +129,9 @@ public class HistogramBar extends View {
 
         int scaleText = 100 / 5;
 
-        mPaint.setFakeBoldText(false);
-        mPaint.setTextSize(textSizeScore);
-        mPaint.setColor(colorScore);
+        mPaintText.setFakeBoldText(false);
+        mPaintText.setTextSize(textSizeScore);
+        mPaintText.setColor(colorScore);
 
         //2.1 从上到下画刻度线和文字
         for (int i = 0; i < 5; i++) {
@@ -136,30 +139,30 @@ public class HistogramBar extends View {
             Log.d(TAG, "LineY - " + i + "= " + startY);
             mPath.moveTo(getPaddingLeft() + getScaleTextWidth("100"), (startY + 0.5f));
             mPath.lineTo(mWidth - getPaddingRight(), (startY + 0.5f));
-            canvas.drawPath(mPath, mPaint);
-            canvas.drawText(String.valueOf(100 - scaleText * i), getPaddingLeft() + getScaleTextWidth("100") - getScaleTextWidth(String.valueOf(100 - scaleText * i)), startY - (getTextAscent() / 2), mPaint);
+            canvas.drawPath(mPath, mPaintText);
+            canvas.drawText(String.valueOf(100 - scaleText * i), getPaddingLeft() + getScaleTextWidth("100") - getScaleTextWidth(String.valueOf(100 - scaleText * i)), startY - (getTextAscent() / 2), mPaintText);
         }
         //2.2 画最底下一行（基准为0）的刻度线和文字
-        int lastRowLocationY = scaleTextHeight + histogramHeight;//最后一行刻度 Y 坐标
+        //最后一行刻度 Y 坐标
+        lastRowLocationY = scaleTextHeight + histogramHeight;
         mPath.moveTo(getPaddingLeft() + getScaleTextWidth("100"), (lastRowLocationY + 0.5f));
         mPath.lineTo(mWidth - getPaddingRight(), (lastRowLocationY + 0.5f));
-        canvas.drawPath(mPath, mPaint);
-        canvas.drawText("0", getPaddingLeft() + getScaleTextWidth("100") - getScaleTextWidth("0"), lastRowLocationY - (getTextAscent() / 2), mPaint);
+        canvas.drawPath(mPath, mPaintText);
+        canvas.drawText("0", getPaddingLeft() + getScaleTextWidth("100") - getScaleTextWidth("0"), lastRowLocationY - (getTextAscent() / 2), mPaintText);
 
         try {
             //3. 画柱状图和底部分类的文字
-            mPaint.setColor(colorCategory);
-            mPaint.setTextSize(textSizeCategory);
+            mPaintText.setColor(colorCategory);
+            mPaintText.setTextSize(textSizeCategory);
 
-            float categoryTextLocationX = getPaddingLeft() + getScaleTextWidth("100") + ConvertUtils.dp2px(20) + rectWidth / 2;//确定左边第一个柱状图的中心基准线 X 坐标
-            float histogramWidth = mWidth - getScaleTextWidth("100") - getPaddingRight() - getPaddingLeft();//柱状图宽度总宽度
-            float categoryWidth = (histogramWidth - rectWidth - ConvertUtils.dp2px(20) * 2) / (categoryTextList.size() - 1);//柱状图每个刻度宽度
+            float categoryTextLocationX = getFirstRectCenterLineX();//确定左边第一个柱状图的中心基准线 X 坐标
+            float categoryWidth = getCategoryWidth(getHistogramWidth());//柱状图每个刻度宽度
             for (int i = 0; i < categoryTextList.size(); i++) {
                 String category = categoryTextList.get(i);
                 int scaleTextWidth = getScaleTextWidth(category);
-                canvas.drawText(category, categoryTextLocationX + categoryWidth * i - scaleTextWidth / 2, lastRowLocationY + getTextHeight(mPaint), mPaint);
+                canvas.drawText(category, categoryTextLocationX + categoryWidth * i - scaleTextWidth / 2, lastRowLocationY + getTextHeight(mPaintText), mPaintText);
                 float score = scoreTextList.get(i);
-                if (currentHistogramProgress[i] < score -5) {
+                if (currentHistogramProgress[i] < score - 5) {
                     currentHistogramProgress[i] += 5;
                     postInvalidateDelayed(5);
                 } else {
@@ -179,6 +182,75 @@ public class HistogramBar extends View {
             Log.d(TAG, "绘制柱状图失败，错误信息：" + e.getMessage());
             e.printStackTrace();
         }
+    }
+
+    /**
+     * 柱状图每个刻度宽度
+     *
+     * @param histogramWidth 柱状图宽度总宽度
+     * @return
+     */
+    private float getCategoryWidth(float histogramWidth) {
+        return (histogramWidth - rectWidth - ConvertUtils.dp2px(20) * 2) / (categoryTextList.size() - 1);
+    }
+
+    /**
+     * 柱状图宽度总宽度
+     *
+     * @return
+     */
+    private int getHistogramWidth() {
+        return getWidth() - getScaleTextWidth("100") - getPaddingRight() - getPaddingLeft();
+    }
+
+    private int getFirstRectCenterLineX() {
+        return getPaddingLeft() + getScaleTextWidth("100") + ConvertUtils.dp2px(20) + rectWidth / 2;
+    }
+
+    float downX;
+    float downY;
+
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        switch (event.getAction()) {
+            case MotionEvent.ACTION_DOWN:
+                downX = event.getX();
+                downY = event.getY();
+                isTouchRect = isTouchRect(downX, downY);
+                if (!isTouchRect) {
+                    return false;
+                }
+                break;
+            case MotionEvent.ACTION_UP:
+                if (isTouchRect && -1 != selectHistogram) {
+                    ToastUtil.showShort("当前选中：" + selectHistogram);
+                }
+                break;
+        }
+        return true;
+    }
+
+    /**
+     * 是否选中 柱状图
+     *
+     * @param downX
+     * @param downY
+     * @return
+     */
+    private boolean isTouchRect(float downX, float downY) {
+        float categoryTextLocationX = getFirstRectCenterLineX();//确定左边第一个柱状图的中心基准线 X 坐标
+        float categoryWidth = getCategoryWidth(getHistogramWidth());//柱状图每个刻度宽度
+        for (int i = 0; i < categoryTextList.size(); i++) {
+            float score = scoreTextList.get(i);
+            if (downX > categoryTextLocationX + (categoryWidth * i) - rectWidth / 2 &&
+                    downX < categoryTextLocationX + (categoryWidth * i) + rectWidth / 2 &&
+                    downY > (scaleTextHeight + ((100 - score) * (lastRowLocationY - scaleTextHeight)) / 100) &&
+                    downY < lastRowLocationY) {
+                selectHistogram = i;
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
@@ -207,7 +279,7 @@ public class HistogramBar extends View {
      * @return
      */
     private int getTextAscent() {
-        Paint.FontMetricsInt metrics = mPaint.getFontMetricsInt();
+        Paint.FontMetricsInt metrics = mPaintText.getFontMetricsInt();
         return metrics.descent + metrics.ascent;
     }
 
@@ -218,7 +290,7 @@ public class HistogramBar extends View {
      * @return
      */
     private int getScaleTextWidth(String text) {
-        int textWidth = (int) mPaint.measureText(text);
+        int textWidth = (int) mPaintText.measureText(text);
         textWidth += ConvertUtils.dp2px(2);
         return textWidth;
     }
