@@ -16,4 +16,22 @@
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+<!--
+    <zhanf.com.zfcustomview.widget.chat.HistogramBar
+        android:layout_width="0dp"
+        android:layout_height="300dp"
+        android:layout_margin="5dp"
+        android:background="#09000000"
+        android:padding="5dp"
+        app:colorScore="#0abcf7"
+        app:colorCategory="#545054"
+        app:colorHistogram="#7342ef6a"
+        app:textSizeCategory="10dp"
+        app:textSizeScore="14dp"
+        app:histogramRadius="10dp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+-->
+
 </android.support.constraint.ConstraintLayout>

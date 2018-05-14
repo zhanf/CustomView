@@ -15,7 +15,7 @@
 
     <zhanf.com.zfcustomview.widget.SelectorTextView
         android:id="@+id/tv_main_item"
-        android:layout_width="180dp"
+        android:layout_width="240dp"
         android:layout_height="40dp"
         android:clickable="true"
         android:gravity="center"

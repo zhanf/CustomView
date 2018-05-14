@@ -1,6 +1,7 @@
 package zhanf.com.zfcustomview.widget.chat;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -45,14 +46,14 @@ public class HistogramBar extends View {
         add("鼻音");
         add("其他");
     }};
-    private List<Integer> scoreTextList = new ArrayList<Integer>() {{
-        add(100);
-        add(80);
-        add(60);
-        add(40);
-        add(20);
-        add(72);
-        add(10);
+    private List<Float> scoreTextList = new ArrayList<Float>() {{
+        add(100.f);
+        add(82.f);
+        add(78.f);
+        add(38.f);
+        add(40.f);
+        add(43.f);
+        add(61.f);
     }};
     private int colorCategory;//分类文字颜色
     private int colorScore;//分数文字颜色
@@ -60,6 +61,7 @@ public class HistogramBar extends View {
     private int textSizeCategory;//分类文字大小
     private int textSizeScore;//分数文字大小
     private int histogramRadius;//矩形柱状图圆角
+    private float[] currentHistogramProgress = new float[]{0.0f,0.0f,0.0f,0.0f,0.0f,0.0f,0.0f};//当前进度，用于实现矩形动画
 
     public HistogramBar(Context context) {
         this(context, null);
@@ -156,16 +158,22 @@ public class HistogramBar extends View {
                 String category = categoryTextList.get(i);
                 int scaleTextWidth = getScaleTextWidth(category);
                 canvas.drawText(category, categoryTextLocationX + categoryWidth * i - scaleTextWidth / 2, lastRowLocationY + getTextHeight(mPaint), mPaint);
-                int score = scoreTextList.get(i);
+                float score = scoreTextList.get(i);
+                if (currentHistogramProgress[i] < score -5) {
+                    currentHistogramProgress[i] += 5;
+                    postInvalidateDelayed(5);
+                } else {
+                    currentHistogramProgress[i] = score;
+                }
                 Log.d(TAG, "HistogramTop - " + i + "= " + (float) (scaleTextHeight + ((100 - score) * (lastRowLocationY - scaleTextHeight)) / 100));
                 if (i < categoryTextList.size() / 2) {//打印日志用于查看柱状图左右是否对称
                     Log.d(TAG, "onDrawLeft: " + (categoryTextLocationX + (categoryWidth * i) - rectWidth / 2 - getScaleTextWidth("100")));
                 } else {
                     Log.d(TAG, "onDrawRight: " + (getWidth() - (categoryTextLocationX + (categoryWidth * i) + rectWidth / 2)));
                 }
-                rectF.set(categoryTextLocationX + (categoryWidth * i) - rectWidth / 2, (float) (scaleTextHeight + ((100 - score) * (lastRowLocationY - scaleTextHeight)) / 100),
+                rectF.set(categoryTextLocationX + (categoryWidth * i) - rectWidth / 2, (float) (scaleTextHeight + ((100 - currentHistogramProgress[i]) * (lastRowLocationY - scaleTextHeight)) / 100),
                         categoryTextLocationX + (categoryWidth * i) + rectWidth / 2, lastRowLocationY);
-                canvas.drawRoundRect(rectF,histogramRadius,histogramRadius, mPaintRect);
+                canvas.drawRoundRect(rectF, histogramRadius, histogramRadius, mPaintRect);
             }
         } catch (Exception e) {
             Log.d(TAG, "绘制柱状图失败，错误信息：" + e.getMessage());
@@ -174,7 +182,7 @@ public class HistogramBar extends View {
     }
 
     /**
-     * 获取横坐标类别文字的高度
+     * 获取底部的分类文字的高度（此处默认给了 20dp）
      *
      * @return
      */
@@ -222,9 +230,13 @@ public class HistogramBar extends View {
         }
     }
 
-    public void setScoreTextList(List<Integer> scoreTextList) {
+    public void setScoreTextList(List<Float> scoreTextList) {
         if (null != scoreTextList && !scoreTextList.isEmpty()) {
             this.scoreTextList = scoreTextList;
+            currentHistogramProgress = new float[scoreTextList.size()];
+            for (int i = 0; i < scoreTextList.size(); i++) {
+                currentHistogramProgress[i] = 0.0f;
+            }
             postInvalidate();
         }
     }
