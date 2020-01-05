@@ -1,5 +1,5 @@
-.gradle/
-.idea/
+.gradle
+.idea
 app/build/
 build/
 gradle/
@@ -46,7 +46,9 @@ captures/
 *.iml
 .idea/workspace.xml
 .ideabraries
-
+.idea/gradle.xml
+.idea/misc.xml
+.idea/modules.xml
 # Keystore files
 *.jks
 
