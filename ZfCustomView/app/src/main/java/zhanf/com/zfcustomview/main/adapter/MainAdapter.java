@@ -2,18 +2,16 @@ package zhanf.com.zfcustomview.main.adapter;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.TextView;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
 import zhanf.com.zfcustomview.R;
 import zhanf.com.zfcustomview.widget.SelectorTextView;
 
@@ -73,14 +71,13 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.ViewHolder> {
     }
 
     static class ViewHolder extends RecyclerView.ViewHolder {
-        @BindView(R.id.iv_main_item)
         ImageView ivMainItem;
-        @BindView(R.id.tv_main_item)
         SelectorTextView tvMainItem;
 
         ViewHolder(View itemView) {
             super(itemView);
-            ButterKnife.bind(this, itemView);
+            ivMainItem = itemView.findViewById(R.id.iv_main_item);
+            tvMainItem = itemView.findViewById(R.id.tv_main_item);
         }
     }
 }

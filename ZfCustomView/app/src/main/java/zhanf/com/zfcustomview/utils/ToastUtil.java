@@ -1,8 +1,9 @@
 package zhanf.com.zfcustomview.utils;
 
 import android.content.Context;
-import android.support.annotation.StringRes;
 import android.widget.Toast;
+
+import androidx.annotation.StringRes;
 
 import zhanf.com.zfcustomview.app.application.App;
 

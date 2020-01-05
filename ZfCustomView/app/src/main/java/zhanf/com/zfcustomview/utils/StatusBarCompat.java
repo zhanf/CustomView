@@ -103,7 +103,7 @@ public class StatusBarCompat {
                     }
                 }
                 result = true;
-            } catch (Exception e) {
+            } catch (Exception ignored) {
 
             }
         }

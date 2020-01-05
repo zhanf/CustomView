@@ -2,9 +2,10 @@ package zhanf.com.zfcustomview.widget;
 
 import android.animation.ObjectAnimator;
 import android.content.Context;
-import android.support.v4.widget.NestedScrollView;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
+
+import androidx.core.widget.NestedScrollView;
 
 /**
  * 仿ios 弹性滚动的NestedScrollView

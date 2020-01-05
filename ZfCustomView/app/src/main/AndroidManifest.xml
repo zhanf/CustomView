@@ -13,7 +13,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/ApplicationTheme">
-        <activity android:name=".main.activity.MainActivity">
+        <activity android:name=".main.activity.MainActivity"
+            android:theme="@style/FullScreenTheme" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
