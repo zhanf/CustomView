@@ -42,4 +42,5 @@ dependencies {
     implementation 'com.blankj:utilcode:1.8.4'
     testImplementation 'junit:junit:4.12'
     implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.0.0'
+    implementation 'androidx.cardview:cardview:1.0.0'
 }
